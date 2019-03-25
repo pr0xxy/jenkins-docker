@@ -18,6 +18,11 @@ RUN apt-get update \
      wget \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
+ 
+# https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+# Avoid installing or using sudo as it has unpredictable TTY and signal-forwarding behavior that can cause problems.
+# need functionality similar to sudo, such as initializing the daemon as root but running it as non-root),
+# consider using “gosu”. Lastly, to reduce layers and complexity, avoid switching USER back and forth frequently.
 
 # install gosu for a better su+exec command
 ARG GOSU_VERSION=1.10
@@ -46,16 +51,16 @@ RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - \
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
-HEALTHCHECK CMD curl -sSLf http://localhost:8080/login >/dev/null || exit 1
+#HEALTHCHECK CMD curl -sSLf http://localhost:8080/login >/dev/null || exit 1
 
 ARG BUILD_DATE
 ARG VCS_REF
 ARG IMAGE_PATCH_VER=0
 LABEL \
     org.label-schema.build-date=$BUILD_DATE \
-    org.label-schema.docker.cmd="docker run -d -p 8080:8080 -v \"$$(pwd)/jenkins-home:/var/jenkins_home\" -v /var/run/docker.sock:/var/run/docker.sock bmitch3020/jenkins-docker" \
+    org.label-schema.docker.cmd="docker run -d -p 8080:8080 -v \"$$(pwd)/jenkins_home:/var/jenkins_home\" -v /var/run/docker.sock:/var/run/docker.sock scbs-prod/jenkins" \
     org.label-schema.description="Jenkins with docker support, Jenkins ${JENKINS_VER}, Docker ${DOCKER_VER}" \
-    org.label-schema.name="bmitch3020/jenkins-docker" \
+    org.label-schema.name="scbs-prod/jenkins" \
     org.label-schema.schema-version="1.0" \
     org.label-schema.url="https://github.com/sudo-bmitch/jenkins-docker" \
     org.label-schema.vcs-ref=$VCS_REF \
