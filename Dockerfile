@@ -1,6 +1,7 @@
 ARG JENKINS_VER=lts
 ARG JENKINS_REGISTRY=jenkins/jenkins
 FROM ${JENKINS_REGISTRY}:${JENKINS_VER}
+MAINTAINER James Notoma <ork7@cdc.gov>
 
 # switch to root, let the entrypoint drop back to jenkins
 USER root
